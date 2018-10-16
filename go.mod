@@ -1,4 +1,4 @@
-module gopkg.in/yaml.v2
+module github.com/buildkite/yaml
 
 go 1.15
 
