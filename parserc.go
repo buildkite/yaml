@@ -2,6 +2,7 @@ package yaml
 
 import (
 	"bytes"
+	"fmt"
 )
 
 // The parser implements the following grammar:
@@ -441,6 +442,9 @@ func yaml_parser_parse_node(parser *yaml_parser_t, event *yaml_event_t, block, i
 				}
 			}
 			if len(tag) == 0 {
+				if bytes.Equal(tag_handle, []byte("!")) {
+					return yaml_parser_set_parser_error(parser, fmt.Sprintf("found an undefined tag, did you mean to quote it? !%s -> '!%s'", tag_suffix, tag_suffix), tag_mark)
+				}
 				yaml_parser_set_parser_error_context(parser,
 					"while parsing a node", start_mark,
 					"found undefined tag handle", tag_mark)
@@ -1005,7 +1009,6 @@ func yaml_parser_process_empty_scalar(parser *yaml_parser_t, event *yaml_event_t
 }
 
 var default_tag_directives = []yaml_tag_directive_t{
-	{[]byte("!"), []byte("!")},
 	{[]byte("!!"), []byte("tag:yaml.org,2002:")},
 }
 
